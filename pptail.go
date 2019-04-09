@@ -38,6 +38,7 @@ func main() {
 	os.Exit(0)
 }
 
+// Print is output colo pretty print.
 func Print(s string) {
 	m := parse(s)
 	pp.Print(m)
