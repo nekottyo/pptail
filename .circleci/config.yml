@@ -35,8 +35,21 @@ jobs:
           paths:
               - ~/go/pkg/mod/cache
 
+  release:
+    docker:
+      - image: circleci/golang:1.10
+    steps:
+      - checkout
+      - run: curl -sL https://git.io/goreleaser | bash
+
 workflows:
-    version: 2
-    build:
-      jobs:
-        - build
+  version: 2
+  build:
+    jobs:
+      - build
+      - release:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*(-.*)*/
