@@ -1,5 +1,6 @@
 pptail
 =====
+[![CircleCI](https://circleci.com/gh/nekottyo/pptail.svg?style=svg)](https://circleci.com/gh/nekottyo/pptail)
 
 pptail is pretty print tail with output with fluentd at docker.
 
