@@ -15,7 +15,7 @@ jobs:
       - checkout
       - run: 'curl -fSL https://github.com/reviewdog/reviewdog/releases/download/$REVIEWDOG_VERSION/reviewdog_linux_amd64 -o reviewdog && chmod +x ./reviewdog'
       - run: 'go get golang.org/x/lint/golint github.com/client9/misspell/cmd/misspell mvdan.cc/unparam'
-      - run: './reviewdog -conf=./.reviewdog.yml -reporter=github-pr-review'
+      - run: './reviewdog -conf=./.reviewdog.yml -reporter=github-pr-check'
 
   test:
     working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
