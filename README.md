@@ -14,6 +14,8 @@ Apr 09 15:57:50 localhost 33ad0cd34e88[947]: 1970-01-01 00:33:39.000000347 +0000
 $ journalctl -xef | pptail
 ```
 
+if log format is td-agent file output plugin, use `-fluent` option
+
 # Install
 
 ```
