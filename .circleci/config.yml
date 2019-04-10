@@ -3,7 +3,21 @@
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2
 jobs:
-  build:
+  lint:
+    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+
+    docker:
+      - image: circleci/golang:1.12
+        environment:
+          GO111MODULE: "on"
+          REVIEWDOG_VERSION: 0.9.11
+    steps:
+      - checkout
+      - run: 'curl -fSL https://github.com/reviewdog/reviewdog/releases/download/$REVIEWDOG_VERSION/reviewdog_linux_amd64 -o reviewdog && chmod +x ./reviewdog'
+      - run: 'go get golang.org/x/lint/golint github.com/client9/misspell/cmd/misspell mvdan.cc/unparam'
+      - run: './reviewdog -conf=./.reviewdog.yml -reporter=github-pr-review'
+
+  test:
     working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
 
     docker:
@@ -24,10 +38,7 @@ jobs:
           command: go mod download
 
 
-      - run:
-          name: Test
-          command: |
-              go test -v ./...
+      - run: 'go test -v ./...'
 
       - save_cache:
           name: Save go modules cache
@@ -46,7 +57,8 @@ workflows:
   version: 2
   build:
     jobs:
-      - build
+      - lint
+      - test
       - release:
           filters:
             branches:
