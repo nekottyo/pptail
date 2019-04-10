@@ -1,6 +1,7 @@
 pptail
 =====
 [![CircleCI](https://circleci.com/gh/nekottyo/pptail.svg?style=svg)](https://circleci.com/gh/nekottyo/pptail)
+[![Build Status](https://cloud.drone.io/api/badges/nekottyo/pptail/status.svg)](https://cloud.drone.io/nekottyo/pptail)
 
 pptail is pretty print tail with output with fluentd at docker.
 
