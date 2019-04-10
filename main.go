@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -14,7 +15,6 @@ import (
 )
 
 const (
-	layout        = "Jan 02 15:04:05"
 	syslogFormat  = `^(\w+\s+\d+\s\d+:\d+:\d+)\s+.+?\s+.+?\s+\w+-\w+-\w+\s+\d+:\d+:\d+\.\d+\s+\+\d+\s+(.*)\.\w+:\s(.*)$`
 	tdAgentFormat = `^(.+?)\s+(.+?)\s+(.*)$`
 )
@@ -66,13 +66,21 @@ func main() {
 
 // Print is output colo pretty print.
 func Print(s, format string) {
-	m := parse(s, format)
+	m, err := parse(s, format)
+	if err != nil {
+		return
+	}
+
 	pp.Println(m)
 }
 
-func parse(s, format string) message {
+func parse(s, format string) (message, error) {
 	rep := regexp.MustCompile(format)
 	result := rep.FindStringSubmatch(s)
+
+	if len(result) < 3 {
+		return message{}, errors.New("failed to parse string")
+	}
 
 	m := message{
 		Date:  result[1],
@@ -81,9 +89,9 @@ func parse(s, format string) message {
 
 	var payload interface{}
 	if err := json.Unmarshal([]byte(result[3]), &payload); err != nil {
-		return m
+		return m, nil
 	}
 
 	m.Payload = payload
-	return m
+	return m, nil
 }
