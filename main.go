@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"regexp"
@@ -13,14 +14,19 @@ import (
 )
 
 const (
-	layout = "Jan 02 15:04:05"
-	// Apr 09 15:57:50 localhost 33ad0cd34e88[947]: 1970-01-01 00:33:39.000000347 +0000 some/image:latest.service_image_1.91880377002d.json: {"level":"INFO", "message":"test"}
+	layout        = "Jan 02 15:04:05"
 	syslogFormat  = `^(\w+\s+\d+\s\d+:\d+:\d+)\s+.+?\s+.+?\s+\w+-\w+-\w+\s+\d+:\d+:\d+\.\d+\s+\+\d+\s+(.*)\.\w+:\s(.*)$`
 	tdAgentFormat = `^(.+?)\s+(.+?)\s+(.*)$`
 )
 
-var fluentFlag bool
-var format = syslogFormat
+var (
+	fluentFlag  bool
+	versionFlag bool
+	format      = syslogFormat
+	version     = "dev"
+	commit      = "none"
+	date        = "unknown"
+)
 
 type message struct {
 	Date    string
@@ -30,12 +36,19 @@ type message struct {
 
 func init() {
 	flag.BoolVar(&fluentFlag, "fluent", false, "use fluentd(td-agent) tail format")
+	flag.BoolVar(&versionFlag, "v", false, "print version")
+	flag.BoolVar(&versionFlag, "version", false, "print version")
 }
 
 func main() {
 	flag.Parse()
 	if fluentFlag {
 		format = tdAgentFormat
+	}
+
+	if versionFlag {
+		fmt.Printf("version %v, commit %v, build at %v\n", version, commit, date)
+		os.Exit(0)
 	}
 
 	s := bufio.NewScanner(os.Stdin)
@@ -54,7 +67,7 @@ func main() {
 // Print is output colo pretty print.
 func Print(s, format string) {
 	m := parse(s, format)
-	pp.Print(m)
+	pp.Println(m)
 }
 
 func parse(s, format string) message {
