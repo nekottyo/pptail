@@ -31,9 +31,12 @@ func TestPrint_syslogFormat(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.in, func(t *testing.T) {
-			actual := parse(c.in, syslogFormat)
+			actual, err := parse(c.in, syslogFormat)
 
 			if diff := cmp.Diff(actual, c.out); diff != "" {
+				t.Errorf("parse func differs: (-got +want)\n%s", diff)
+			}
+			if diff := cmp.Diff(err, nil); diff != "" {
 				t.Errorf("parse func differs: (-got +want)\n%s", diff)
 			}
 		})
@@ -65,9 +68,12 @@ func TestPrint_fluentdFormat(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.in, func(t *testing.T) {
-			actual := parse(c.in, tdAgentFormat)
+			actual, err := parse(c.in, tdAgentFormat)
 
 			if diff := cmp.Diff(actual, c.out); diff != "" {
+				t.Errorf("parse func differs: (-got +want)\n%s", diff)
+			}
+			if diff := cmp.Diff(err, nil); diff != "" {
 				t.Errorf("parse func differs: (-got +want)\n%s", diff)
 			}
 		})
